@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+  <selection name="project.task.state.selection">
+    <option value="todo" icon="circle">To-do</option>
+    <option value="progress" icon="pending">In progress</option>
+    <option value="complete" icon="check_circle">Completed</option>
+  </selection>
+
+  <grid name="project-task-grid" title="Project Tasks" model="com.axelor.project.db.ProjectTask">
+    <field name="name" />
+    <field name="createDate" />
+    <field name="startDate" />
+    <field name="endDate" />
+    <field name="user" />
+    <field name="project" />
+    <field name="priority" />
+    <field name="state" />
+    <field name="progress" widget="Progress" aggregate="avg"/>
+  </grid>
+
+  <grid name="project-task-tree-grid" title="Project Tasks" model="com.axelor.project.db.ProjectTask"
+      widget="tree-grid" x-tree-field="subTasks" summary-view="project-task-work-items-form">
+    <field name="name" />
+    <field name="createDate" />
+    <field name="startDate" />
+    <field name="endDate" />
+    <field name="user" />
+    <field name="project" />
+    <field name="priority" />
+    <field name="state" />
+    <field name="progress" widget="Progress" aggregate="avg"/>
+  </grid>
+
+  <grid name="project-my-task-grid" title="Project Tasks" model="com.axelor.project.db.ProjectTask" groupBy="project">
+    <field name="name" />
+    <field name="startDate" />
+    <field name="endDate" />
+    <field name="priority" />
+    <field name="state" />
+    <field name="progress" widget="Progress" aggregate="avg"/>
+    <field name="project" hidden="true"/>
+  </grid>
+
+  <form name="project-task-form" title="Project Task" model="com.axelor.project.db.ProjectTask"
+    onNew="project.task.on.new,project.task.default.attrs"
+    onLoad="project.task.default.attrs">
+    <panel title="Overview">
+      <field name="name"/>
+      <field name="priority"/>
+      <field name="createDate"/>
+      <field name="deadlineDate"/>
+      <field name="startDate" validIf="!startDate || $moment(startDate) &lt;= $moment(endDate)"
+        onChange="com.axelor.project.web.ProjectController:computeSubTasks"/>
+      <field name="endDate" validIf="!endDate || $moment(startDate) &lt;= $moment(endDate)"
+        onChange="com.axelor.project.web.ProjectController:computeSubTasks"/>
+      <field name="project"/>
+      <field name="user" hidden="true" showIf="!_xShowMyTasks"/>
+      <field name="parentTask"/>
+      <field name="sequence"/>
+      <field name="state" widget="Stepper" />
+      <field name="progress" widget="Progress"/>
+    </panel>
+    <panel-tabs>
+      <panel-related field="subTasks"
+        orderBy="startDate"
+        editable="true"
+        widget="tree-grid"
+        x-tree-field-title="Add sub-task"
+        x-tree-field="subTasks"
+        x-expand-all="subTasks,workItems"
+        summary-view="project-task-work-items-form"
+        onNew="project.task.on.new,project.task.default.attrs"
+        onLoad="project.task.default.attrs"
+        onChange="com.axelor.project.web.ProjectController:computeSubTasksTree">
+        <field name="name" />
+        <field name="createDate" hidden="true" />
+        <field name="user" hidden="true" />
+        <field name="priority" />
+        <field name="startDate" validIf="!startDate || $moment(startDate) &lt;= $moment(endDate)" />
+        <field name="endDate" validIf="!endDate || $moment(startDate) &lt;= $moment(endDate)" />
+        <field name="parentTask" hidden="true"/>
+      </panel-related>
+      <panel-related field="workItems" editable="true" orderBy="date">
+        <field name="name"/>
+        <field name="date"/>
+        <field name="hours"/>
+      </panel-related>
+      <panel title="Notes">
+        <field name="notes" showTitle="false" colSpan="12"/>
+      </panel>
+      <panel title="Planning">
+        <field name="plannedStartDate"/>
+        <field name="plannedDuration"/>
+        <field name="plannedProgress"/>
+        <spacer/>
+        <panel title="Linked project tasks" colSpan="12">
+          <field name="finishToStartTaskSet" widget="TagSelect" />
+          <field name="startToStartTaskSet" widget="TagSelect" />
+          <field name="finishToFinishTaskSet" widget="TagSelect" />
+          <field name="startToFinishTaskSet" widget="TagSelect" />
+        </panel>
+      </panel>
+    </panel-tabs>
+  </form>
+
+  <form name="project-task-work-items-form" title="Work items" model="com.axelor.project.db.ProjectTask">
+    <panel-related field="workItems" orderBy="date" showIf="workItems.length || !$readonly()">
+      <field name="name"/>
+      <field name="date"/>
+      <field name="hours"/>
+    </panel-related>
+  </form>
+
+  <tree name="project-task-tree" title="Project Tasks">
+
+    <!-- define tree columns -->
+    <column name="title" type="string" />
+    <column name="progress" type="integer" />
+    <column name="taskState" widget="ImageSelect" title="State"/>
+
+    <!-- define 1st level node -->
+    <node model="com.axelor.project.db.Project" onClick="projects.task.open.project">
+      <field name="name" as="title" />
+    </node>
+
+    <!-- define 2nd level node -->
+    <node model="com.axelor.project.db.ProjectTask" parent="project" draggable="true" onClick="projects.task.open.task">
+      <field name="name" as="title" />
+      <field name="progress" as="progress" />
+      <field name="state" as="taskState" />
+    </node>
+
+  </tree>
+
+  <kanban name="project-task-kanban" title="Project Tasks" model="com.axelor.project.db.ProjectTask"
+    columnBy="state" sequenceBy="priority" onNew="project.task.kanban.on.new" limit="10">
+    <field name="name"/>
+    <field name="notes" />
+    <field name="progress"/>
+    <field name="startDate"/>
+    <field name="endDate"/>
+    <field name="user"/>
+    <hilite color="danger" if="progress == 0" />
+    <hilite color="success" if="progress == 100" />
+    <hilite color="info" if="progress >= 50" />
+    <hilite color="warning" if="progress > 0" />
+    <template><![CDATA[
+      <>
+        <strong>{$fmt('name')}</strong>
+        <Box>{notes}</Box>
+        {startDate && (
+          <Box d="flex" alignItems="end" justifyContent="space-between">
+            <Box d="flex" mt={2} style={{ fontSize: "0.85rem", color: "grey", gap: "0.25rem" }}>
+              <Icon icon='clock' fontSize="0.85rem" /> {$moment(startDate).format('LLL')}
+            </Box>
+            {user && <Image src={$image('user', 'image')} style={{ width: "1.5rem", height: "1.5rem" }} />}
+          </Box>
+        )}
+      </>
+    ]]></template>
+  </kanban>
+
+  <!-- dashboard box with custom template -->
+  <custom name="report-tasks-today" title="My Tasks" css="report-box">
+    <dataset type="jpql">
+    <![CDATA[
+    select count(self.id) as total from ProjectTask self WHERE self.state != 'complete' AND self.user = :__user__
+    ]]>
+    </dataset>
+    <template>
+    <![CDATA[
+    <report-box label='Pending tasks' value='first.total'/>
+    ]]>
+    </template>
+  </custom>
+
+  <action-record name="project.task.kanban.on.new" model="com.axelor.project.db.ProjectTask">
+    <field name="name" expr="#{_value}"/>
+    <field name="user" expr="#{__user__}"/>
+    <field name="createDate" expr="#{__time__}"/>
+    <field name="startDate" expr="#{__time__}"/>
+    <field name="endDate" expr="#{__time__.plusHours(1)}"/>
+    <field name="priority" expr="0" />
+  </action-record>
+
+  <action-record name="project.task.on.new" model="com.axelor.project.db.ProjectTask">
+    <field name="createDate" expr="eval: startDate ? startDate : __time__"/>
+    <field name="user" expr="eval: __user__"/>
+  </action-record>
+
+  <action-attrs name="project.task.default.attrs">
+    <attribute for="name" name="focus" expr="eval: true"/>
+  </action-attrs>
+
+  <action-view name="projects.task.open.project" title="Project" model="com.axelor.project.db.Project">
+    <view type="grid" name="project-grid"/>
+    <view type="form" name="project-form"/>
+    <domain>self.id = :project_id</domain>
+    <context name="project_id" expr="eval: id"/>
+    <context name="_showSingle" expr="true"/>
+  </action-view>
+
+  <action-view name="projects.task.open.task" title="Task" model="com.axelor.project.db.ProjectTask">
+    <view type="grid" name="project-task-grid"/>
+    <view type="form" name="project-task-form"/>
+    <domain>self.id = :task_id</domain>
+    <context name="task_id" expr="eval: id"/>
+    <context name="_showSingle" expr="true"/>
+  </action-view>
+
+  <calendar name="project-task-calendar" title="Project Tasks" model="com.axelor.project.db.ProjectTask"
+    colorBy="user"
+    eventStart="startDate"
+    eventStop="endDate"
+    eventLength="1">
+
+    <hilite if="state === 'todo'" styles="outline" />
+    <hilite if="state === 'progress'" styles="stripe" />
+    <hilite if="state === 'complete'" styles="strike" />
+    <hilite if="$moment().isAfter(endDate ?? startDate)" styles="fade" />
+
+    <field name="name" />
+    <field name="state" />
+    <field name="user" />
+
+    <template>
+      <![CDATA[
+      <>
+        <Box d="flex" alignItems="center" justifyContent="end">
+          <Image src={$image('user', 'image')} height="24px" />
+          <Box>{$fmt("user")}</Box>
+        </Box>
+      </>
+      ]]>
+    </template>
+  </calendar>
+
+  <calendar name="project-task-calendar-my" title="My Tasks" model="com.axelor.project.db.ProjectTask"
+    colorBy="project"
+    eventStart="startDate"
+    eventStop="endDate"
+    eventLength="1">
+    <field name="name" />
+  </calendar>
+
+  <gantt name="project-task-gantt" title="Task planning" model="com.axelor.project.db.ProjectTask"
+    taskStart="plannedStartDate"
+    taskDuration="plannedDuration"
+    taskParent="parentTask"
+    taskSequence="sequence"
+    taskProgress="plannedProgress"
+    x-finish-to-start="finishToStartTaskSet"
+    x-start-to-start="startToStartTaskSet"
+    x-finish-to-finish="finishToFinishTaskSet"
+    x-start-to-finish="startToFinishTaskSet">
+    <field name="name" />
+    <field name="project" />
+    <field name="user" />
+  </gantt>
+
+</object-views>

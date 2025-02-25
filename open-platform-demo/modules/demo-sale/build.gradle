@@ -1,0 +1,13 @@
+plugins {
+  id 'com.axelor.app'
+}
+
+axelor {
+  title = "Axelor :: Sale"
+}
+
+
+
+dependencies {
+  api project(':modules:demo-contact')
+}

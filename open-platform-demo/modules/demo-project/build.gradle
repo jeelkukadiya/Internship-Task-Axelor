@@ -1,0 +1,15 @@
+plugins {
+  id 'com.axelor.app'
+}
+
+axelor {
+  title = "Axelor :: Project"
+}
+
+
+
+
+
+dependencies {
+  api project(":modules:demo-contact")
+}
