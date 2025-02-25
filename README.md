@@ -47,7 +47,6 @@ This project demonstrates:
 ### 7️⃣ **Contact Module Project (Axelor Framework)**
 This task involves:
 - Creating a **Contact Module** using the **Axelor framework**.
-- Implementing database interactions and UI components.
 
 ### 8️⃣ **Open Platform Demo Project (Axelor)**
 This is a demo project showcasing multiple modules in **Axelor Framework**:
