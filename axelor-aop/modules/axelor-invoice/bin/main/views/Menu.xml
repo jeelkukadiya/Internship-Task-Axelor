@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+	
+	<menuitem name="menu-minvoice-book" title="Invoice" icon="file-text" />
+	
+	<menuitem name="menu-invoice-friends"
+		parent="menu-minvoice-book" title="Invoice" action="invoice.all" />
+	
+	<menuitem name="menu-dataInovice-friends"
+		parent="menu-minvoice-book" title="Data" />
+	
+	<menuitem name="menu-InoviceLine-friends"
+		parent="menu-dataInovice-friends" title="InvoiceLine"
+		action="invoiceline.all" />
+	
+	<action-view name="invoice.all" title="invoices"
+		model="com.axelor.invoice.db.Invoice">
+		<view type="grid" name="invoice-grid" />
+		<view type="form" name="invoice-form" />
+		<context name="status"
+			expr="eval: __ids__ != null ? __repo__(Invoice).find(__ids__.get(0)) : null" />
+	</action-view>
+	<action-view name="invoiceline.all" title="Invoices lines"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<view type="grid" name="invoiceline-grid" />
+		<view type="form" name="invoiceline-form" />
+	</action-view>
+</object-views>

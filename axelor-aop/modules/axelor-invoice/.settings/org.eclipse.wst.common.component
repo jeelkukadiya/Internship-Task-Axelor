@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+	<wb-module deploy-name="axelor-invoice">
+		<wb-resource deploy-path="/" source-path="src/main/resources"/>
+		<wb-resource deploy-path="/" source-path="build/src-gen/resources"/>
+		<wb-resource deploy-path="/" source-path="src/main/java"/>
+		<wb-resource deploy-path="/" source-path="build/src-gen/java"/>
+		<dependent-module archiveName="axelor-sales-7.3.0.jar" deploy-path="../" handle="module:/resource/axelor-sales/axelor-sales">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module archiveName="axelor-account-7.3.0.jar" deploy-path="../" handle="module:/resource/axelor-account/axelor-account">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module archiveName="axelor-contact-7.3.0.jar" deploy-path="../" handle="module:/resource/axelor-contact/axelor-contact">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+	</wb-module>
+</project-modules>

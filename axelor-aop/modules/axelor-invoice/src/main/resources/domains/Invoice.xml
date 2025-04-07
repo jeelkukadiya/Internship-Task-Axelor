@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models
+	xmlns="http://axelor.com/xml/ns/domain-models"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.3.xsd">
+	<module name="invoice" package="com.axelor.invoice.db" />
+	<sequence name="invoice.sequence" initial="1" increment="1"
+		padding="5" prefix="INV" />
+	<!-- Status Selection Constants -->
+	<enum name="InvoiceStatusSelect">
+		<item name="DRAFT" value="draft" />
+		<item name="VALIDATED" value="validated" />
+		<item name="VENTILATED" value="ventilated" />
+		<item name="CANCELLED" value="cancelled" />
+	</enum>
+	<!-- Invoice Entity -->
+	<entity name="Invoice">
+		<!-- Auto-generated Sequence -->
+		<string name="invoiceSeq" title="Sequence" required="true"
+			readonly="true" sequence="invoice.sequence" />
+		<datetime name="invoiceDateT" />
+		<enum name="statusSelect" ref="InvoiceStatusSelect"
+			 readonly="true" />
+		<decimal name="exTaxTotal" title="Total price without tax">
+		    <![CDATA[
+		    if (invoiceLineList == null) {
+		        return BigDecimal.ZERO;
+		    }
+		    BigDecimal total = BigDecimal.ZERO;
+		    for (InvoiceLine line : invoiceLineList) {
+		        if (line != null && line.getExTaxTotal() != null) {
+		            total = total.add(line.getExTaxTotal());
+		        }
+		    }
+		    return total;
+		    ]]>
+		</decimal>
+
+		<decimal name="inTaxTotal" title="Total price with tax">
+		    <![CDATA[
+		    if (invoiceLineList == null) {
+		        return BigDecimal.ZERO;
+		    }
+		    BigDecimal total = BigDecimal.ZERO;
+		    for (InvoiceLine line : invoiceLineList) {
+		        if (line != null && line.getExTaxTotal() != null && line.getTaxRate() != null) {
+		            BigDecimal lineTotal = line.getExTaxTotal().add(
+		                line.getExTaxTotal().multiply(
+		                    line.getTaxRate().divide(new BigDecimal(100))
+		                )
+		            );
+		            total = total.add(lineTotal);
+		        }
+		    }
+		    return total;
+		    ]]>
+		</decimal>
+
+
+		<one-to-many name="invoiceLineList" ref="InvoiceLine" />
+		<many-to-one name="customer"
+			ref="com.axelor.contact.db.Contact"  />
+			
+	 <many-to-one name="saleOrder"
+			ref="com.axelor.sales.db.SaleOrder" /> 
+			
+			
+		<many-to-many ref="com.axelor.invoice.db.Invoice"
+			name="mergeToInvoice" />
+		<many-to-one name="generatedInvoice"
+			title="Generated Invoice" ref="com.axelor.invoice.db.Invoice" />
+		<one-to-many name="mergedInvoiceList"
+			title="Merged Invoices" ref="com.axelor.invoice.db.Invoice"
+			mappedBy="generatedInvoice" />
+
+		 <!-- <boolean name="archived" title="Archived" default="false"/>
+        <string name="notes" title="Notes" large="true"/>
+        <datetime name="createdOn" readonly="true"/>
+        <datetime name="updatedOn" readonly="true"/>
+
+        Tracking
+        <track on="UPDATE">
+            <field name="invoiceDateT" />
+            <field name="statusSelect" />
+            <field name="customer" />
+            <field name="saleOrder" />
+            <field name="generatedInvoice" />
+            <field name="archived" /> 
+        </track>-->
+        
+	</entity>
+</domain-models>
+
+

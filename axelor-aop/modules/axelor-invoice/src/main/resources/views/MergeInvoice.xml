@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+	
+	<form name="customer-invoices-merge-form"
+		model="com.axelor.invoice.db.Invoice" title="Merge Invoices"
+		width="large" onNew="action-update-merged-invoice-list" canNew="false"
+		canEdit="false">
+		<panel-related name="mergeToInvoice"
+			field="mergeToInvoice" form-view="invoice-form"
+			grid-view="invoice-grid" title="Invoices to merge" colSpan="12"
+			target="com.axelor.invoice.db.Invoice" type="many-to-many" />
+		<panel name="actionsPanel" sidebar="true" title="Actions">
+			<button name="generateMergedInvoicesBtn"
+				title="Merge into single invoice" help="Irreversible operation!"
+				onClick="action-invoice-group-merge-invoices" />
+		</panel>
+	</form>
+	
+	
+	
+	
+	
+	<!-- Actions for invoice -->
+	
+	<action-view name="action-invoice-merge-view"
+		title="Merge Invoices" model="com.axelor.invoice.db.Invoice">
+		<view type="form" name="customer-invoices-merge-form" />
+		<view-param name="popup" value="reload" />
+		<context name="selectedIds" expr="eval: __ids__" />
+		<context name="customerIds"
+			expr="eval: __ids__!= null ? __repo__(Invoice).find(__ids__.get(0))?.customer?.id : null" />
+	</action-view>
+	
+	<!-- Actions for invoice -->
+	<action-record name="action-update-merged-invoice-list"
+		model="com.axelor.invoice.db.Invoice">
+		<field name="mergeToInvoice"
+			expr=" eval: customerIds != null ? __repo__(Invoice).all().filter('self.statusSelect = ? AND self.customer.id = :customerIds', 'draft').bind('customerIds', customerIds).fetch().toSet(): null" />
+	</action-record>
+	
+	<!-- merge working -->
+
+	<action-method name="invoice.cancel">
+		<call class="com.axelor.invoice.web.InvoiceController"
+			method="cancelInvoices" />
+	</action-method>
+	<action-method name="action-invoice-group-merge-invoices">
+		<call class="com.axelor.invoice.web.InvoiceController"
+			method="mergeInvoices" />
+	</action-method>
+</object-views>

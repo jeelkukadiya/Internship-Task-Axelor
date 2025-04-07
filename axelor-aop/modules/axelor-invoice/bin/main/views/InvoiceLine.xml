@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+	
+	<grid name="invoiceline-grid" title="invoice lines"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<field name="description" />
+		<field name="quantity" />
+		<field name="exTaxTotal" title="total without tax" />
+		<field name="inTaxTotal" title="Total with tax" />
+		<field name="taxRate" title="Tax rate" />
+		<field name="product" />
+	</grid>
+	
+	<form name="invoiceline-form-popup" title="invoicelines"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<panel name="invoiceOrderLines">
+			<field name="product" required="true"
+				onChange="action-invoice-order-line-record-product-onchange"
+				domain="self.unitPriceUntaxed > 0" />
+			<field name="description" readonlyIf="true" />
+			<field name="unitPriceUntaxed"
+				onChange="action-invoice-order-line-record-compute-ex-tax-total"
+				readonlyIf="true" />
+			<field name="quantity"
+				onChange="action-invoice-order-line-record-compute-ex-tax-total" />
+			<field name="taxRate"
+				onChange="action-invoice-order-line-record-compute-tax-rate" />
+			<!-- contact is not perfect onNew="action-invoice-order-line-attrs-set-tax-rate" -->
+			<field name="exTaxTotal" title="total without tax"
+				readonlyIf="true" />
+			<field name="inTaxTotal" title="total with tax"
+				readonlyIf="true" />
+			<static name="productWarning" hidden="true"
+				css="label-warning">Please fill the product first</static>
+		</panel>
+	</form>
+	
+	
+	<form name="invoiceline-form" title="mainPanel"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<panel name="overviewPanel" title="Overview">
+			<field name="product" readonlyIf="true" />
+			<field name="description" readonlyIf="true" />
+			<field name="quantity" readonlyIf="true" />
+			<field name="unitPriceUntaxed" readonlyIf="true" />
+			<field name="exTaxTotal" readonlyIf="true" />
+			<field name="taxRate" readonlyIf="true" />
+		</panel>
+	</form>
+	
+	
+	<!-- product onchange -->
+	<action-record
+		name="action-invoice-order-line-record-product-onchange"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<field name="description" expr="eval: product?.name"
+			if="product != null" />
+		<field name="unitPriceUntaxed"
+			expr="eval: product?.unitPriceUntaxed" if="product != null" />
+		<field name="exTaxTotal"
+			expr="eval: quantity * unitPriceUntaxed" if="product != null" />
+		<field name="inTaxTotal"
+			expr="eval: exTaxTotal + (exTaxTotal * taxRate) "
+			if="product != null" />
+	</action-record>
+	
+	<!-- extaxtotal onchange brcause of quantity -->
+	<action-record
+		name="action-invoice-order-line-record-compute-ex-tax-total"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<field name="exTaxTotal"
+			expr="eval: quantity * unitPriceUntaxed" />
+		<field name="inTaxTotal"
+			expr="eval: exTaxTotal + (exTaxTotal * taxRate) "
+			if="product != null" />
+	</action-record>
+	
+	<!-- onchange beacause of tax rate -->
+	<action-record
+		name="action-invoice-order-line-record-compute-tax-rate"
+		model="com.axelor.invoice.db.InvoiceLine">
+		<field name="exTaxTotal"
+			expr="eval: quantity * unitPriceUntaxed" />
+		<field name="inTaxTotal"
+			expr="eval: exTaxTotal + (exTaxTotal * taxRate) "
+			if="product != null" />
+	</action-record>
+</object-views>
+
+
+
+

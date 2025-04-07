@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<domain-models
+	xmlns="http://axelor.com/xml/ns/domain-models"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.3.xsd">
+	<module name="invoice" package="com.axelor.invoice.db" />
+	<!-- InvoiceLine Entity -->
+	<entity name="InvoiceLine">
+		<string name="description" required="true" namecolumn="true" />
+		<decimal name="quantity" title="Quantity" required="true" />
+		<decimal name="exTaxTotal" title="Total without tax"
+			required="true" default="0" />
+
+		<decimal name="inTaxTotal">
+			<![CDATA[
+		      if (exTaxTotal != null && taxRate != null) {
+		        return exTaxTotal.add(exTaxTotal.multiply(taxRate.divide(new BigDecimal(100))));
+		      }
+		      return BigDecimal.ZERO;
+	     	]]>
+		</decimal>
+
+		<decimal name="taxRate" title="Tax rate" min="0" max="100"
+			default="0" />
+		<decimal name="unitPriceUntaxed" title="Unit price untaxed" />
+		<many-to-one name="product"
+			ref="com.axelor.sales.db.Product" />
+		<many-to-one name="invoice" ref="Invoice" />
+		<many-to-one name="saleOrderLine"
+			ref="com.axelor.sales.db.SaleOrderLine" />
+	</entity>
+</domain-models>

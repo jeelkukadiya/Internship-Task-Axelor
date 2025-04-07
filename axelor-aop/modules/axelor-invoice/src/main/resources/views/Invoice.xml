@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+	<grid name="invoice-grid" title="invoices"
+		model="com.axelor.invoice.db.Invoice">
+		<toolbar>
+			<button name="cancelInvoice" icon="printer" title="Print"
+				onClick="invoice.cancel" />
+			<button name="singleInvoice" icon="rocket-takeoff-fill"
+				title="merge into single invoice"
+				onClick="action-invoice-merge-view" />
+		</toolbar>
+		<field name="invoiceSeq" title="Sequence" />
+		<field name="invoiceDateT" title="invoices Date And Time" />
+		<field name="exTaxTotal" title="Total price without tax" />
+		<field name="inTaxTotal" title="Total price with tax" />
+		<field name="statusSelect" title="status" />
+		<field name="customer" />
+	</grid>
+
+	<form name="invoice-form" title="invoices"
+		model="com.axelor.invoice.db.Invoice"
+		onNew="action-invoice-order-record-new"
+		onSave="action-update-merged-invoice-list">
+		<panel name="Invoices">
+			<field name="invoiceSeq" showIf="invoiceSeq" />
+			<field name="statusSelect" readonly="true" />
+			<field name="customer" readonlyIf="invoiceLineList.length > 0" required="true" />
+		</panel>
+
+		<panel-related name="invoiceLines"
+			field="invoiceLineList" form-view="invoiceline-form-popup"
+			grid-view="invoiceline-grid" />
+
+		<!-- <panel-related name="mergedFromInvoices" field="mergedInvoiceList" 
+			grid-view="invoice-grid" hideIf="mergedInvoiceList==null"/> -->
+
+		<panel-related name="mergedFromInvoices"
+			field="mergedInvoiceList" grid-view="invoice-grid" readonly="true"
+			showIf="mergedInvoiceList.length > 0" />
+
+
+		<panel name="Dates" title="Dates" readonly="true"
+			foldable="true" sidebar="true">
+			<field name="invoiceDateT" title="invoices Date And Time"
+				readonly="true" />
+		</panel>
+		<!-- <panel name="mailPanel" title="Mail"
+			model="com.axelor.invoice.db.Invoice" /> -->
+			
+		<panel name="prices" title="prices" readonly="true"
+			foldable="true" sidebar="true">
+			<field name="exTaxTotal" title="Total price without tax"
+				readonly="true" />
+			<field name="inTaxTotal" title="Total price with tax"
+				readonly="true" />
+		</panel>
+
+
+
+		<panel sidebar="true" name="actionsPanel">
+			<button name="Validate" title="Finalize Validate"
+				showIf="statusSelect == 'DRAFT'"
+				onClick="action-invoice-order-validate-finalize,action-invoice-order-record-finalize"
+				css="btn-success" />
+			<button name="Ventilate" title="Confirm Ventilate"
+				showIf="statusSelect == 'VALIDATED'"
+				onClick="action-invoice-order-validate-confirm,action-invoice-order-record-confirm,action-invoice-gen-move"
+				css="btn-primary" />
+			<button name="cancel" title="Cancel Order"
+				hideIf="statusSelect == 'VENTILATED'"
+				prompt="Cancelling the invoice is definitive! Do you want to continue?"
+				onClick="action-invoice-order-record-cancel" css="btn-danger" />
+		</panel>
+	</form>
+
+
+	 <action-method name="action-invoice-gen-move">
+        <call class="com.axelor.invoice.web.AccountController" method="generateMoveFromInvoice"/>
+    </action-method>
+
+	<action-view name="invoice.form" title="invoices"
+	    model="com.axelor.invoice.db.Invoice">
+	    <view type="form" name="invoice-form"/>
+	</action-view>
+
+	<!-- onnew action for invoice -->
+	<action-record name="action-invoice-order-record-new"
+		model="com.axelor.invoice.db.Invoice">
+		<field name="statusSelect" expr="eval:'DRAFT'" />
+		<field name="invoiceDateT" expr="eval: __datetime__" />
+	</action-record>
+
+	<!-- action while statuse is select as draft -->
+	<action-validate
+		name="action-invoice-order-validate-finalize">
+		<error message="Please fill at least one invoice order line."
+			if="invoiceLineList == null || invoiceLineList.isEmpty()" />
+		<error
+			message="There is a detail line with 0 total price. Please correct it."
+			if="invoiceLineList.find{it.exTaxTotal == 0} != null" />
+	</action-validate>
+
+	<action-record
+		name="action-invoice-order-record-finalize"
+		model="com.axelor.invoice.db.Invoice">
+		<field name="statusSelect" expr="eval:'VALIDATED'" />
+	</action-record>
+
+	<!-- action while statuse is select as validated -->
+	<action-validate
+		name="action-invoice-order-validate-confirm">
+		<error message="Please fill at least one invoice order line."
+			if="invoiceLineList == null || invoiceLineList.isEmpty()" />
+		<!-- <error message="There is a detail line with 0 total price. Please 
+			correct it." if="invoiceLineList.find{it.exTaxTotal == 0} != null" /> -->
+	</action-validate>
+
+	<action-record name="action-invoice-order-record-confirm"
+		model="com.axelor.invoice.db.Invoice">
+		<!-- <field name="confirmationDateT" expr="eval: __datetime__" /> -->
+		<field name="statusSelect" expr="eval:'VENTILATED'" />
+	</action-record>
+
+	<!-- action while statuse is select as ventilated -->
+	<action-record name="action-invoice-order-record-cancel"
+		model="com.axelor.invoice.db.Invoice">
+		<field name="statusSelect" expr="eval:'CANCELLED'" />
+	</action-record>
+
+	<!-- Export Action -->
+	<action-export name="action-invoice-order-export"
+		model="com.axelor.invoice.db.Invoice">
+		<export name="Invoice Orders"
+			template="Invoice-order-export.txt" />
+	</action-export>
+</object-views>
