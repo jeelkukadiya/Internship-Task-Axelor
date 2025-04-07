@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+	<!-- Quotation Sale Order Grid -->
+	<grid name="quotation-sale-order-grid"
+		title="Quotation Sale Orders" model="com.axelor.sales.db.SaleOrder">
+		<field name="saleOrderSeq" title="Sequence" />
+		<field name="quotationDate" title="Quotation Date" />
+		<field name="statusSelect" title="Status" />
+		<field name="totalWithTax"  />
+		<field name="customer" title="Customer" />
+	</grid>
+
+	<!-- Quotation Sale Order Form -->
+	<form name="quotation-sale-order-form"
+		title="Quotation Sale Order" model="com.axelor.sales.db.SaleOrder">
+		<panel name="mainPanel" title="Main">
+			<field name="saleOrderSeq" readonlyIf="true" />
+			<field name="customer" readonlyIf="true" />
+			<field name="statusSelect" readonlyIf="true" />
+		</panel>
+
+		<panel name="datesPanel" title="Dates" foldable="true">
+			<field name="quotationDateT" readonlyIf="true" />
+			<field name="confirmationDateT" readonlyIf="true" />
+		</panel>
+
+		<panel name="amountsPanel" title="Amounts" foldable="true">
+			<field name="totalWithTax" readonlyIf="true" />
+		</panel>
+
+		<panel-related field="saleOrderLineList"
+			form-view="sale-order-line-form-popup"
+			grid-view="sale-order-line-grid" />
+	</form>
+
+
+
+</object-views>
+
+
+
+
+
+
+  
+  

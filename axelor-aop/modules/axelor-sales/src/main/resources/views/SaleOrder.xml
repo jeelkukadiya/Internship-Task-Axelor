@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+	<!-- Sale Order Grid -->
+	<grid name="sale-order-grid" title="All Sale Orders"
+		model="com.axelor.sales.db.SaleOrder">
+		<field name="saleOrderSeq" title="Sequence" />
+		<field name="quotationDate" title="Quotation Date" />
+		<field name="confirmationDate" title="Confirmation Date" />
+		<!-- <field name="estimatedInvoiceDate"/> --> <!-- Added estimated invoice date -->
+		<field name="statusSelect" title="Current Status" />
+		<field name="totalWithTax" />
+		<field name="customer" title="Customer" />
+		<button name="export" title="Export"
+			onClick="action-sale-order-export" />
+	</grid>
+
+	<!-- Sale Order Form -->
+	<form name="sale-order-form" title="Sale Order"
+		model="com.axelor.sales.db.SaleOrder"
+		onNew="action-sale-order-record-new">
+		<panel name="mainPanel" title="Main">
+			<field name="saleOrderSeq" showIf="saleOrderSeq" />
+			<field name="customer"
+				readonlyIf="saleOrderLineList.length > 0" required="true" />
+			<field name="statusSelect" readonly="true" />
+		</panel>
+
+		<panel-related field="saleOrderLineList"
+			form-view="sale-order-line-form-popup"
+			grid-view="sale-order-line-grid" />
+
+		<panel sidebar="true" name="actionsPanel">
+			<button name="finalizeQuotation" title="Finalize Quotation"
+				showIf="statusSelect == 'DRAFT'"
+				onClick="action-sale-order-validate-finalize,action-sale-order-record-finalize"
+				css="btn-success" />
+			<button name="confirmOrder" title="Confirm Order"
+				showIf="statusSelect == 'QUOTATION'"
+				onClick="action-sale-order-validate-confirm,action-sale-order-record-confirm"
+				css="btn-primary" />
+			<button name="cancelOrder" title="Cancel Order"
+				hideIf="statusSelect == 'CANCELLED'"
+				prompt="Cancelling the order is definitive! Do you want to continue?"
+				onClick="action-sale-order-record-cancel" css="btn-danger" />
+		</panel>
+		<panel sidebar="true" name="datesPanel" title="Dates"
+			readonly="true" foldable="true">
+			<field name="quotationDate" />
+			<field name="confirmationDate" />
+			   <!-- Added estimated invoice date -->
+		</panel>
+		<panel sidebar="true" name="amountsPanel" title="Amounts"
+			readonly="true" foldable="true">
+			<field name="totalWithTax" />
+		</panel>
+		
+		<panel sidebar="true" name="invoicePanel" title="Genrate Invoice"
+			 foldable="true">
+			<field name="estimatedInvoiceDate"/>
+			<button name="generateInvoiceBtn" 
+			        title="Generate Invoice" 
+			        onClick="action-generate-invoice-from-sale-order"
+			        showIf="statusSelect == 'CONFIRMED'"/>  
+		</panel>	 
+	</form>
+
+	<!-- Actions -->
+	
+	 <action-method name="action-generate-invoice-from-sale-order">
+        <call class="com.axelor.invoice.web.SaleOrderController" method="generateInvoiceFromSaleOrder"/>
+    </action-method>
+	
+	
+	<action-record
+		name="action-sale-order-line-record-compute-ex-tax-total"
+		model="com.axelor.sales.db.SaleOrderLine">
+		<field name="exTaxTotal"
+			expr="eval: quantity * unitPriceUntaxed" />
+	</action-record>
+
+
+
+	<action-record name="action-sale-order-record-new"
+		model="com.axelor.sales.db.SaleOrder">
+		<field name="statusSelect" expr="eval:'DRAFT'" />
+	</action-record>
+
+	<action-validate
+		name="action-sale-order-validate-finalize">
+		<error message="Please fill at least one sale order line."
+			if="saleOrderLineList == null || saleOrderLineList.isEmpty()" />
+		<error
+			message="There is a detail line with 0 total price. Please correct it."
+			if="saleOrderLineList.find{it.exTaxTotal == 0} != null" />
+	</action-validate>
+
+	<action-record name="action-sale-order-record-finalize"
+		model="com.axelor.sales.db.SaleOrder">
+		<field name="quotationDate" expr="eval: __datetime__" />
+		<field name="statusSelect" expr="eval:'QUOTATION'" />
+	</action-record>
+
+	<action-validate
+		name="action-sale-order-validate-confirm">
+		<error message="Please fill at least one sale order line."
+			if="saleOrderLineList == null || saleOrderLineList.isEmpty()" />
+		<error
+			message="There is a detail line with 0 total price. Please correct it."
+			if="saleOrderLineList.find{it.exTaxTotal == 0} != null" />
+	</action-validate>
+
+	<action-record name="action-sale-order-record-confirm"
+		model="com.axelor.sales.db.SaleOrder">
+		<field name="confirmationDate" expr="eval: __datetime__" />
+		<field name="statusSelect" expr="eval:'CONFIRMED'" />
+	</action-record>
+
+	<action-record name="action-sale-order-record-cancel"
+		model="com.axelor.sales.db.SaleOrder">
+		<field name="statusSelect" expr="eval:'CANCELLED'" />
+	</action-record>
+
+	<!-- Export Action -->
+	<action-export name="action-sale-order-export"
+		model="com.axelor.sales.db.SaleOrder">
+		<export name="Sale Orders" template="sale-order-export.txt" />
+	</action-export>
+
+</object-views>

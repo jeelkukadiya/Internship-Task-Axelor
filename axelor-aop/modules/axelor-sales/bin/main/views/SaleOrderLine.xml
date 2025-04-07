@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+  <!-- Sale Order Line Grid -->
+  <grid name="sale-order-line-grid" title="Sale Order Lines"
+        model="com.axelor.sales.db.SaleOrderLine">
+    <field name="description"/>
+    <field name="product"/>
+    <field name="quantity"/>
+    <field name="unitPriceUntaxed" title="Unit Price Untaxed"/>
+    <field name="exTaxTotal" title="Total Excluding Tax"/>
+    <field name="taxRate"/>
+    <field name="saleOrder.saleOrderSeq" title="Sale Order Sequence"/>
+    <field name="saleOrder.statusSelect" title="Status"/>
+    <field name="saleOrder.customer" title="Customer"/>
+    <field name="product.productCategory" title="Product Category"/>
+  </grid>
+
+  <!-- Sale Order Line Form -->
+  <form name="sale-order-line-form" title="Sale Order Line"
+        model="com.axelor.sales.db.SaleOrderLine">
+    <panel title="Details">
+      <field name="product" readonlyIf="true"/>
+      <field name="description" readonlyIf="true"/>
+      <field name="quantity" readonlyIf="true"/>
+      <field name="unitPriceUntaxed" readonlyIf="true" title="Unit Price Untaxed"/>
+      <field name="exTaxTotal" readonlyIf="true" title="Total Excluding Tax"/>
+      <field name="taxRate" readonlyIf="true"/>
+    </panel>
+    <panel name="sidePanel" sidebar="true">
+      <field name="saleOrder.saleOrderSeq" title="Sale Order Sequence"/>
+      <field name="saleOrder.customer" title="Customer"/>
+      <field name="product.productCategory" title="Product Category"/>
+    </panel>
+  </form>
+
+  <!-- Sale Order Line Form for Popup -->
+  <form name="sale-order-line-form-popup" title="Sale Order Line"
+        model="com.axelor.sales.db.SaleOrderLine">
+    <panel title="Details">
+      <field name="product" required="true"
+             onChange="action-sale-order-line-record-product-onchange"
+             domain="self.unitPriceUntaxed > 0"/>
+      <field name="description" readonly="true"/>
+      <field name="unitPriceUntaxed" readonly="true" title="Unit Price Untaxed"
+             onChange="action-sale-order-line-record-compute-ex-tax-total"/>
+      <field name="quantity"
+             onChange="action-sale-order-line-record-compute-ex-tax-total"/>
+      <field name="taxRate"/>
+      <field name="exTaxTotal" readonly="true" title="Total Excluding Tax"/>		
+      <static name="productWarning" hidden="true"
+              css="label-warning">Please fill the product first</static>
+    </panel>
+  </form>
+
+  <!-- Actions -->
+  <action-attrs
+    name="action-sale-order-line-attrs-set-tax-rate">
+    <attribute name="value" for="taxRate" expr="eval: 0.2"
+               if="id == null"/>
+    <attribute name="hidden" for="taxRate"
+               expr="eval: saleOrder?.customer?.isSubjectToTaxes == false"
+               if="saleOrder?.customer != null"/>
+    <attribute name="hidden" for="productWarning"
+               expr="eval: product != null"/>
+  </action-attrs>
+
+  <action-attrs
+    name="action-sale-order-line-attrs-hide-tax-rate">
+    <attribute name="hidden" for="taxRate"
+               expr="eval: saleOrder?.customer?.isSubjectToTaxes == false"
+               if="saleOrder?.customer != null"/>
+    <attribute name="hidden" for="productWarning"
+               expr="eval: product != null"/>
+  </action-attrs>
+
+  <action-record
+    name="action-sale-order-line-record-product-onchange"
+    model="com.axelor.sales.db.SaleOrderLine">
+    <field name="description" expr="eval: product?.name"
+           if="product != null"/>
+    <field name="unitPriceUntaxed"
+           expr="eval: product?.unitPriceUntaxed" if="product != null"/>
+    <field name="exTaxTotal"
+           expr="eval: quantity * unitPriceUntaxed" if="product != null"/>
+  </action-record>
+
+  <action-record
+    name="action-sale-order-line-record-compute-ex-tax-total"
+    model="com.axelor.sales.db.SaleOrderLine">
+    <field name="exTaxTotal"
+           expr="eval: quantity * unitPriceUntaxed"/>
+  </action-record>
+
+</object-views>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+  
+  <!-- Main Sales Menu -->
+  <menuitem name="menu-sales" title="Sales" icon="fa-line-chart"/>
+
+  <!-- All Sale Orders -->
+  <menuitem name="menu-sales-all-orders"
+            parent="menu-sales"
+            title="All Sale Orders"
+            action="sale.order.all"/>
+
+  <!-- Quotation Sale Orders -->
+  <menuitem name="menu-sales-quotation-orders"
+            parent="menu-sales"
+            title="Quotation Sale Orders"
+            action="quotation.order.all"/>
+
+  <!-- Configuration Menu -->
+  <menuitem name="menu-sales-configuration"
+            parent="menu-sales"
+            title="Configuration"/>
+
+  <!-- Configuration Submenus -->
+  <menuitem name="menu-sales-product-categories"
+            parent="menu-sales-configuration"
+            title="Product Categories"
+            action="product.category.all"/>
+
+  <menuitem name="menu-sales-products"
+            parent="menu-sales-configuration"
+            title="Products"
+            action="product.all"/>
+
+  <!-- Data Menu -->
+  <menuitem name="menu-sales-data"
+            parent="menu-sales"
+            title="Data" icon="fa-list"/>
+
+  <!-- Data Submenus -->
+  <menuitem name="menu-sales-order-lines"
+            parent="menu-sales-data"
+            title="Sale Order Lines"
+            action="sale.order.line.all"/>
+
+  <!-- Action Views -->
+  <action-view name="sale.order.all"
+               title="All Sale Orders"
+               model="com.axelor.sales.db.SaleOrder">
+    <view type="grid" name="sale-order-grid"/>
+    <view type="form" name="sale-order-form"/>
+  </action-view>
+
+  <action-view name="quotation.order.all"
+               title="Quotation Sale Orders"
+               model="com.axelor.sales.db.SaleOrder">
+    <view type="grid" name="quotation-sale-order-grid"/>
+    <view type="form" name="sale-order-form"/>
+    <domain>self.statusSelect = 'quotation'</domain>
+  </action-view>
+
+  <action-view name="product.category.all"
+               title="Product Categories"
+               model="com.axelor.sales.db.ProductCategory">
+    <view type="grid" name="product-category-grid"/>
+    <view type="form" name="product-category-form"/>
+  </action-view>
+
+  <action-view name="product.all"
+               title="Products"
+               model="com.axelor.sales.db.Product">
+    <view type="grid" name="product-grid"/>
+    <view type="form" name="product-form"/>
+  </action-view>
+
+  <action-view name="sale.order.line.all"
+               title="Sale Order Lines"
+               model="com.axelor.sales.db.SaleOrderLine">
+    <view type="grid" name="sale-order-line-grid"/>
+    <view type="form" name="sale-order-line-form"/>
+    <domain>self.saleOrder.statusSelect = 'confirmed'</domain>
+  </action-view>
+  
+  
+
+</object-views>
