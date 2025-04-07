@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+  <grid name="contact-grid" title="Contacts" model="com.axelor.contact.db.Contact">
+    <field name="fullName"/>
+    <field name="birthDate" title="Date of Birth"/>
+    <field name="email"/>
+    <field name="phone"/>
+    <field name="account"/>
+    <field name="isSubjectToTaxes" title="Apply taxes"/>
+    <field name="address"/>
+  </grid>
+
+  <form name="contact-form" title="Contact" model="com.axelor.contact.db.Contact">
+    <panel title="Profile">
+      <field name="image" widget="Image" showTitle="false"/>
+      <field name="title"/>
+      <field name="firstName"/>
+      <field name="lastName"/>
+      <field name="birthDate" title="Date of Birth"/>  
+    </panel>
+    
+    <panel-tabs>
+      <panel title="Contact" name="mainPanel">
+        <field name="email" colSpan="4">
+          <viewer><![CDATA[
+            <a href="mailto:{{record.email}}">{{record.email}}</a>
+          ]]></viewer>
+        </field>
+        
+        <field name="phone" colSpan="4">
+          <viewer><![CDATA[
+            <a href="tel:{{record.phone}}">{{record.phone}}</a>
+          ]]></viewer>
+        </field>
+        
+        <field name="address" colSpan="4">
+          <viewer><![CDATA[
+            {{record.address.fullName}}
+          ]]></viewer>
+        </field>
+      </panel>
+
+      <panel title="Other informations" name="otherInfoPanel">
+        <field name="isSubjectToTaxes" title="Apply taxes" widget="boolean-switch"/>
+        <field name="familyContactSet" widget="TagSelect" title="Family members"/>
+        <field name="account" title="account"/>
+      </panel> 
+    </panel-tabs>
+    		
+	<panel-related field="saleOrder">
+			<field name="saleOrderLineList.description" />
+			<field name="saleOrderLineList.product" />
+			<field name="saleOrderLineList.quantity" />
+			<field name="saleOrderLineList.unitPriceUntaxed" title="Unit Price Untaxed" />
+			<field name="saleOrderLineList.exTaxTotal" title="Total Excluding Tax" />
+			<field name="saleOrderLineList.taxRate" />
+			<field name="saleOrderSeq" title="Sale Order Sequence" />
+			<field name="statusSelect" title="Status" />
+			<field name="customer" title="Customer" />
+			<field name="saleOrderLineList.product.productCategory" title="Product Category" />
+		</panel-related>	
+		
+  </form>
+
+</object-views>

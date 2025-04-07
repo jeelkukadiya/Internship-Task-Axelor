@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- modules/axelor-contact/src/main/resources/views/Menu.xml -->
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+  <menuitem name="menu-contact" title="Contact" icon="fa-user" order="-90"/>
+
+  <menuitem name="menu-contact-contacts" parent="menu-contact"
+    title="Contacts" action="contact.all"/>
+
+  <action-view name="contact.all" title="Contacts" model="com.axelor.contact.db.Contact">
+    <view type="grid" name="contact-grid"/>
+    <view type="form" name="contact-form"/>
+  </action-view>
+  
+  <!-- Add to modules/axelor-contact/src/main/resources/views/Menu.xml -->
+  <menuitem name="menu-contact-events" parent="menu-contact"
+    title="Events" action="contact.events"/>
+
+  <action-view name="contact.events" title="Events" model="com.axelor.contact.db.Event">
+    <view type="grid" name="event-grid"/>
+    <view type="form" name="event-form"/>
+  </action-view>
+
+  <menuitem name="menu-contact-config" parent="menu-contact"
+    title="Configuration" icon="fa-gear"/>
+
+  <menuitem name="menu-contact-title" parent="menu-contact-config"
+    title="Titles" action="contact.title"/>
+
+  <action-view name="contact.title" title="Titles" model="com.axelor.contact.db.Title">
+    <view type="grid" name="title-grid"/>
+    <view type="form" name="title-form"/>
+  </action-view>
+
+  <menuitem name="menu-contact-country" parent="menu-contact-config"
+    title="Countries" action="contact.country"/>
+
+  <action-view name="contact.country" title="Countries" model="com.axelor.contact.db.Country">
+    <view type="grid" name="country-grid"/>
+    <view type="form" name="country-form"/>
+  </action-view>
+
+  <menuitem name="menu-contact-address" parent="menu-contact-config"
+    title="Addresses" action="contact.address"/>
+
+  <action-view name="contact.address" title="Addresses" model="com.axelor.contact.db.Address">
+    <view type="grid" name="address-grid"/>
+    <view type="form" name="address-form"/>
+  </action-view>
+
+</object-views>

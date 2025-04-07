@@ -1,0 +1,44 @@
+plugins {
+  id 'com.axelor.app'
+}
+
+axelor {
+  title = 'Axelor AOP'
+}
+
+allprojects {
+
+  group = 'com.axelor'
+  //version = '1.0.0'
+  version = '7.3.0'
+
+
+
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(17)
+    }
+  }
+  
+  
+
+  afterEvaluate {
+    test {
+      useJUnitPlatform()
+      beforeTest { descriptor ->
+        logger.lifecycle('Running: ' + descriptor)
+      }
+    }
+  }
+}
+
+
+dependencies {
+
+  // add dependencies
+  	 
+    implementation project(':modules:axelor-contact')
+     implementation project(':modules:axelor-sales')
+    implementation project(':modules:axelor-invoice')
+      implementation project(':modules:axelor-account')    
+}

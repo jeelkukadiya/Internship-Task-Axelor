@@ -1,0 +1,37 @@
+<!-- modules/axelor-contact/src/main/resources/domains/Event.xml -->
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models
+  https://axelor.com/xml/ns/domain-models/domain-models_7.3.xsd">
+
+  <module name="contact" package="com.axelor.contact.db"/>
+
+  <entity name="Event" cacheable="true">
+    <string name="title" required="true" namecolumn="true" title="Title"/>
+    <datetime name="startDate" required="true" title="Start date"/>
+    <datetime name="endDate" required="true" title="End date"/>
+    <integer name="statusSelect" required="true" title="Status" selection="contact.event.status.select"/>
+    <integer name="typeSelect" required="true" title="Type" selection="contact.event.type.select"/>
+    <string name="notes" large="true" title="Notes"/>
+    <many-to-one name="plannedFor" ref="Contact" required="true" title="Planned for"/>
+
+    <!-- Constants for Status -->
+    <extra-code><![CDATA[
+      // Status
+      public static final int STATUS_DRAFT = 0;
+      public static final int STATUS_PROPOSED = 1;
+      public static final int STATUS_ACCEPTED = 2;
+      public static final int STATUS_FINISHED = 3;
+      public static final int STATUS_MISSING_CONTACT = 4;
+      public static final int STATUS_POSTPONED = 5;
+      public static final int STATUS_REFUSED = 6;
+      public static final int STATUS_CANCELLED = 7;
+
+      // Type
+      public static final int TYPE_OTHER = 0;
+      public static final int TYPE_PHONE_CALL = 1;
+      public static final int TYPE_MEETING = 2;
+    ]]></extra-code>
+  </entity>
+
+</domain-models>

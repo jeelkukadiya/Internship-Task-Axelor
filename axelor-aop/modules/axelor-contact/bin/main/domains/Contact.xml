@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- modules/axelor-contact/src/main/resources/domains/Contact.xml -->
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models
+  https://axelor.com/xml/ns/domain-models/domain-models_7.3.xsd">
+
+  <module name="contact" package="com.axelor.contact.db"/>
+
+  <entity name="Contact" cacheable="true" >
+    <many-to-one name="title" ref="Title" required="true" title="Title"/>
+    <string name="firstName" required="true" title="First name"/>
+    <string name="lastName" required="true" title="Last name"/>
+    <string name="fullName" namecolumn="true" readonly="true">
+      <![CDATA[
+        if (title == null || firstName == null || lastName == null) return "";
+        return title.getCode() + " " + firstName + " " + lastName;
+      ]]>
+    </string>
+    <date name="birthDate" title="Date of birth"/>
+    <string name="email" title="Email"/>
+    <string name="phone" title="Phone number"/>
+    <binary name="image" title="Profile picture"/>
+    <boolean name="isSubjectToTaxes" title="Apply taxes" default="false"/>
+    <many-to-one name="address" ref="Address" title="Address"/>
+    <many-to-many name="familyContactSet" ref="Contact" title="Family members"/>
+    <track>
+      <field name="firstName"/>
+      <field name="lastName"/>
+      <field name="email"/>
+      <field name="phone"/>
+      <field name="address"/>
+    </track>
+  </entity>
+
+</domain-models>

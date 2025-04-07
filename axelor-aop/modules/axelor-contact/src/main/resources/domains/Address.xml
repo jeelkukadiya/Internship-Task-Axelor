@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- modules/axelor-contact/src/main/resources/domains/Address.xml -->
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models
+  https://axelor.com/xml/ns/domain-models/domain-models_7.3.xsd">
+
+  <module name="contact" package="com.axelor.contact.db"/>
+
+  <entity name="Address" cacheable="true">
+    <string name="fullName" namecolumn="true" readonly="true">
+      <![CDATA[
+        if (numberAndStreet == null || zip == null || city == null) return "";
+        return numberAndStreet + " " + zip + " " + city;
+      ]]>
+    </string>
+    <string name="numberAndStreet" required="true" title="N° / Street"/>
+    <string name="zip" required="true" title="Zip"/>
+    <string name="city" required="true" title="City"/>
+    <many-to-one name="country" ref="Country" required="true" title="Country"/>
+  </entity>
+
+</domain-models>
