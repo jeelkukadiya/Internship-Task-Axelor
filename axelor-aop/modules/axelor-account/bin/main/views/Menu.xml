@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+	<!-- Root Accounting Menu -->
+	<menuitem name="menu-accounting" title="Accounting"
+		icon="fa-book" icon-background="red" order="-80" />
+
+	<!-- Move Menu -->
+	<menuitem name="menu-accounting-move" parent="menu-accounting"
+		title="Move" action="action-move-view" />
+
+	<action-view name="action-move-view" title="Move"
+		model="com.axelor.account.db.Move">
+		<view type="grid" name="move-grid" />
+		<view type="form" name="move-form" />
+	</action-view>
+
+	<!-- Move Line Menu -->
+	<menuitem name="menu-accounting-moveline"
+		parent="menu-accounting" title="Move line"
+		action="action-moveline-view" />
+
+	<action-view name="action-moveline-view" title="MoveLine"
+		model="com.axelor.account.db.MoveLine">
+		<view type="grid" name="move-line-grid" />
+		<view type="form" name="move-line-form" />
+	</action-view>
+
+	<!-- Data Submenu -->
+	<menuitem name="menu-accounting-data" parent="menu-accounting"
+		title="Data" icon="fa-database" />
+
+	<!-- Account under Data -->
+	<menuitem name="menu-accounting-account"
+		parent="menu-accounting-data" title="Account"
+		action="action-account-view" />
+
+	<!-- Action for Account -->
+	<action-view name="action-account-view" title="Accounts"
+		model="com.axelor.account.db.Account">
+		<view type="grid" name="account-grid" />
+		<view type="form" name="account-form" />
+	</action-view>
+
+</object-views>

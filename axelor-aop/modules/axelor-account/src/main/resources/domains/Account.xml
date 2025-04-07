@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models
+	xmlns="http://axelor.com/xml/ns/domain-models"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.3.xsd">
+	<module name="account" package="com.axelor.account.db" />
+
+	<entity name="Account">
+		<integer name="code" required="true" />
+		<string name="name" required="true" />
+		<string name="fullName" namecolumn="true" >
+      <![CDATA[
+        if ( code == null || name == null) return "";
+        return  code + "-" + name;
+      ]]>
+    </string>
+	</entity>
+</domain-models>

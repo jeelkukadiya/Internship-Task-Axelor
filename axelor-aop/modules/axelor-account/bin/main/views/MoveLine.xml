@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+	<!-- MoveLine Views -->
+	<grid name="move-line-grid" title="Move Lines"
+		model="com.axelor.account.db.MoveLine" canNew="false" canEdit="false">
+		<field name="reference" />
+		
+		<field name="debit" />
+		<field name="credit" />
+		<field name="move"/>
+		<field name="account" />
+	</grid>
+
+	<form name="move-line-form" title="Move Line"
+		model="com.axelor.account.db.MoveLine"
+		onSave="action-move-line-set-reference">
+		<panel name="mainPanel">
+			<field name="reference" />
+			<field name="account" />
+			<field name="debit" />
+			<field name="credit" />
+		</panel>
+	</form>
+
+	<!-- Actions -->
+	<action-record name="action-move-line-set-reference"
+		model="com.axelor.account.db.MoveLine">
+		<field name="reference"
+			expr="eval: __sequence__('moveLine.sequence')" />
+	</action-record>
+</object-views>
