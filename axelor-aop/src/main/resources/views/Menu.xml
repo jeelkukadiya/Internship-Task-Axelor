@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- modules/axelor-contact/src/main/resources/views/Menu.xml -->
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views
+  https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+ <menuitem name="menu-dashboard" order="1" title="Dashboard" icon="speedometer" icon-background="indigo"/>
+
+   <menuitem name="menu-admin-dashboard" parent="menu-dashboard"
+    title="Admin Dashboard" action="admin-dashboard"/>
+
+</object-views>

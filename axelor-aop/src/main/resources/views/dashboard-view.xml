@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://axelor.com/xml/ns/object-views/object-views_7.3.xsd">
+
+	<dashboard name="admin.dashboard" title="Admin Dashboard">
+		<dashlet colSpan="12" action="grid:event-grid" />
+		<dashlet colSpan="6" action="chart:chart.last-month-sales" />
+		<dashlet colSpan="6"
+			action="chart:chart.turnover.per.customer" />
+		<dashlet colSpan="6" action="chart:chart.invoiced.per.month" />
+	</dashboard>
+
+	<action-view name="admin-dashboard" title="Admin Dashboard">
+		<view type="dashboard" name="admin.dashboard" />
+	</action-view>
+
+	<!-- Chart: Last Month Sales per Product Category -->
+	<chart name="chart.last-month-sales"
+		title="Sales per Product Category">
+		
+		<dataset type="jpql">
+        <![CDATA[
+        SELECT
+            COALESCE(SUM(self.exTaxTotal), 0) AS amount,
+            COALESCE(_product.productCategory.name, 'Uncategorized') AS category
+        FROM
+            SaleOrderLine self
+        LEFT JOIN
+            self.product AS _product
+        LEFT JOIN
+            self.saleOrder AS _saleOrder
+        WHERE
+            _saleOrder.statusSelect = 'confirmed'
+            AND _saleOrder.confirmationDate IS NOT NULL
+            AND _saleOrder.confirmationDate BETWEEN (CAST(current_date AS date) - 30) AND (CAST(current_date AS date) + 1)
+           
+        GROUP BY
+            _product.productCategory.name
+        ORDER BY
+            amount DESC
+        ]]>
+        </dataset>
+		<category key="category" />
+		<series key="amount" type="bar" />
+		<config name="no-data-message" value="No sales data available" />
+	</chart>
+
+
+
+
+	<!-- Chart: Turnover (Ex Tax) per Customer per Status -->
+	<chart name="chart.turnover.per.customer"
+		title="Sales by Status (exTaxTotal)">
+		<!-- Customer filter -->
+		<search-fields>
+			<field name="customer" title="Customer" type="reference"
+				target="com.axelor.contact.db.Contact" />
+		</search-fields>
+
+		<!-- JPQL dataset -->
+		<dataset type="jpql">
+    <![CDATA[
+    SELECT
+      COALESCE(SUM(self.totalWithTax), 0) AS amount,
+      CASE self.statusSelect
+        WHEN 'cancelled' THEN 'Turnover Lost (Cancelled)'
+        WHEN 'confirmed' THEN 'Turnover Earned (Confirmed)'
+        WHEN 'quotation' THEN 'Forecast Turnover (Quotation)'
+        ELSE 'Other'
+      END AS statusLabel
+    FROM
+      SaleOrder self
+    WHERE
+      self.statusSelect != 'draft'
+      AND (:customer IS NULL OR self.customer = :customer)
+    GROUP BY
+      self.statusSelect
+    ]]>
+  </dataset>
+
+		<!-- X-Axis: Status -->
+		<category key="statusLabel" />
+
+		<!-- Y-Axis: Amount -->
+		<series key="amount" type="pie" />
+
+		<!-- Fallback message -->
+		<config name="no-data-message"
+			value="No sales data available for selected customer." />
+	</chart>
+
+
+
+
+	<!-- <chart name="chart.invoiced.per.month" title="Amount Invoiced (3 Months)"> 
+		<search-fields> <field name="customer" title="Customer" domain="self.status 
+		!= 'draft'" target="com.axelor.contact.db.Contact" /> <field name="startDate" 
+		title="Start Date" type="date" default="today-3m" /> </search-fields> <dataset 
+		type="rpc">com.axelor.invoice.service.DashboardService:getInvoiceData</dataset> 
+		<category key="invoiceDate" type="month" /> <series key="exTaxTotal" type="bar" 
+		/> <config name="search-fields" value="startDate,customer" /> <config name="onInit" 
+		value="startDate = now() - 3M" /> </chart> -->
+
+
+	<!-- <chart name="chart.invoiced.per.month"
+		title="Amount Invoiced (3 Months)">
+		<search-fields>
+			<field name="customer" title="Customer" type="reference"
+				target="com.axelor.contact.db.Contact" />
+			<field name="selectedDate" title="Selected Date" type="date" />
+		</search-fields>
+
+		<dataset type="jpql">
+		    <![CDATA[
+		    SELECT
+		       COALESCE(SUM(self.exTaxTotal), 0) AS amount,
+		       EXTRACT(MONTH FROM self.invoiceDateT) AS invoiceMonth
+		    FROM
+		      com.axelor.invoice.db.Invoice self 
+		    WHERE
+		      self.statusSelect != 'draft'
+		      AND (:customer IS NULL OR self.customer = :customer) 
+		    GROUP BY
+		      invoiceMonth
+		    ORDER BY
+		        invoiceMonth
+		    ]]>
+		  </dataset>
+
+		<category key="invoiceDateT" type="month" />
+		<series key="amount" type="bar" />
+		<config name="search-fields" value="selectedDate,customer" />
+		<config name="onInit" value="selectedDate = now()" />
+		<config name="dateRange"
+			value="startDate = selectedDate - 3M, endDate = selectedDate" />
+	</chart> -->
+	<chart name="chart.invoiced.per.month" title="Amount Invoiced (3 Months)">
+  
+  <!-- Search Fields -->
+  <search-fields>
+    <field name="customer" title="Customer" type="reference" target="com.axelor.contact.db.Contact" />
+    <field name="selectedDate" title="Selected Date" type="date" />
+  </search-fields>
+
+  <!-- Dataset -->
+  <dataset type="jpql">
+    <![CDATA[
+    SELECT
+      COALESCE(SUM(self.exTaxTotal), 0) AS amount,
+      TO_CHAR(self.invoiceDateT, 'Mon YYYY') AS invoiceMonth
+    FROM
+      com.axelor.invoice.db.Invoice self
+    WHERE
+      self.statusSelect != 'draft'
+      AND self.invoiceDateT BETWEEN (CAST(:selectedDate AS date) - 90) AND (CAST(:selectedDate AS date) + 1)
+      AND (:customer IS NULL OR self.customer = :customer)
+    GROUP BY
+      TO_CHAR(self.invoiceDateT, 'Mon YYYY')
+    ORDER BY
+      MIN(self.invoiceDateT)
+    ]]>
+  </dataset>
+
+  <!-- Chart Configuration -->
+  <category key="invoiceMonth" />
+  <series key="amount" type="bar" />
+  <config name="search-fields" value="selectedDate,customer" />
+ 
+  <config name="no-data-message" value="No invoice data found for the selected range." />
+
+</chart>
+		
+
+</object-views>
