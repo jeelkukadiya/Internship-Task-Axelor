@@ -1,73 +1,115 @@
-# Internship Task Repository
+🚀 Internship Task Repository – Axelor AOP Training
+Welcome to the Internship Task Repository, a comprehensive collection of hands-on tasks and projects completed during the Axelor AOP Internship. This repository showcases work across different technologies and tools, including Linux, Git, Gradle, RESTEasy, Hibernate, JUnit, and the Axelor Open Platform.
 
-This repository contains various tasks and projects categorized based on different technologies and tools. Below is a breakdown of the tasks included:
+📂 Task Overview
+🔹 1. Linux Commands & Scripting
+Basic Linux terminal commands (file, process, user management).
 
-## 📌 Task Breakdown
+Shell scripting for automation and monitoring tasks.
 
-### 1️⃣ **Linux Commands Task**
-This task includes:
-- Basic Linux commands for file management, user management, and process handling.
-- Basic shell scripts for automation and system monitoring.
-- A project for creating a **System Monitoring Tool** using shell scripts.
+Mini project: System Monitoring Tool built using shell scripts.
 
-### 2️⃣ **Git Task**
-This task covers:
-- Basic Git commands for version control.
-- Managing repositories, branches, commits, and merges.
-- Working with remote repositories and GitHub workflows.
+🔹 2. Git Version Control
+Core Git commands for repository management.
 
-### 3️⃣ **Gradle Task**
-This task includes:
-- Basic Gradle commands for dependency and project management.
-- Understanding **Gradle build system** and creating build scripts.
-- Managing dependencies and creating executable builds.
+Working with branches, commits, merges, and GitHub.
 
-### 4️⃣ **RESTEasy Project**
-This project contains multiple tasks related to RESTful services:
-- Creating **RESTEasy services** using Java EE.
-- Implementing CRUD operations using REST endpoints.
-- Handling requests and responses using JAX-RS.
+Understanding collaborative workflows using Git.
 
-### 5️⃣ **ProjectWithMaven**
-This project covers Hibernate and ORM concepts with PostgreSQL:
-- **Hibernate Factory Session** for managing database connections.
-- **Mapping tasks**:
-  - One-to-One Mapping
-  - One-to-Many Mapping
-  - Many-to-Many Mapping
-- Using **Guice Dependency Injection** for dependency management.
-- Writing **Simple JUnit Tests** for unit testing.
+🔹 3. Gradle Build System
+Basic Gradle usage and project structure.
 
-### 6️⃣ **CRUD REST API Project**
-This project demonstrates:
-- Basic CRUD (Create, Read, Update, Delete) operations.
-- Implementing **User DAO Class** for database operations.
-- Building a **REST API** for user management.
+Creating build.gradle files for project automation.
 
-### 7️⃣ **Contact Module Project (Axelor Framework)**
-This task involves:
-- Creating a **Contact Module** using the **Axelor framework**.
+Managing dependencies and building Java projects.
 
-### 8️⃣ **Open Platform Demo Project (Axelor)**
-This is a demo project showcasing multiple modules in **Axelor Framework**:
-- Contact Module
-- Sales Module
-- Custom Data Management
-- Project Management Modules
+🔹 4. RESTEasy Web Services
+Building REST APIs using Java EE with RESTEasy.
 
-## 🚀 How to Use This Repository
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/Internship-Task-Axelor.git
-   cd Internship-Task-Axelor
-   ```
-2. Navigate to the respective task folder and follow instructions in each project.
+CRUD operations with REST endpoints.
 
-## 📄 License
-This repository is for learning purposes only.
+Handling HTTP requests and responses using JAX-RS.
 
----
+🔹 5. Hibernate + Maven Project
+Object-Relational Mapping (ORM) with Hibernate.
 
-**Happy Coding! 🚀**
+Session Factory and configuration for PostgreSQL.
 
-# Internship-Task-Axelor
+Mapping strategies:
+
+One-to-One
+
+One-to-Many
+
+Many-to-Many
+
+Integration with Google Guice for Dependency Injection.
+
+Writing unit tests using JUnit.
+
+🔹 6. CRUD REST API with User Management
+Java-based RESTful API project.
+
+CRUD functionality using DAO and JDBC/PostgreSQL.
+
+REST endpoints for managing user data.
+
+🔹 7. Axelor Contact Module
+Custom Contact Module built using the Axelor Open Platform.
+
+Domain and view configurations using XML and Axelor Studio.
+
+Integrated with form, grid, and reference fields.
+
+🔹 8. Axelor ERP Mini Project
+A multi-module demo application built with Axelor Framework:
+
+📇 Contact Management
+
+🛒 Sales Module
+
+🧾 Invoice Management
+
+💼 Accounting Module
+
+📊 Custom Dashboard (Graphs & KPIs)
+
+✅ Business logic, domain modeling, view generation, and workflows
+
+⚙️ How to Use
+Clone the repository:
+
+bash
+Copy
+Edit
+git clone https://github.com/your-username/Internship-Task-Axelor.git
+cd Internship-Task-Axelor
+Open any task/project folder and follow the README or instructions provided inside each subdirectory.
+
+Axelor-based projects require the Axelor Open Platform to be installed and configured. Refer to the Axelor documentation for setup.
+
+🧪 Technologies Used
+Java 8 / Java EE
+
+PostgreSQL / SQL
+
+RESTEasy / JAX-RS
+
+Hibernate / JPA
+
+Gradle / Maven
+
+JUnit
+
+Guice (Dependency Injection)
+
+Axelor Open Platform
+
+Git / GitHub
+
+Linux / Shell Script
+
+📄 License
+This repository is created for educational and learning purposes only under internship guidance. Feel free to use it as a reference.
+
+Happy Learning & Coding! 🌟
